@@ -1,0 +1,30 @@
+name: generate-sdks
+on:
+  push:
+    branches:
+      - main
+jobs:
+  generate-java-sdk:
+    runs-on: ubuntu-latest
+    name: Generate Java SDK
+    steps:
+      - name: Checkout spec
+        uses: actions/checkout@v2
+
+      - name: Generate SDK
+        uses: openapi-generators/openapitools-generator-action@v1.5.0
+        with:
+          openapi-file: zamzarapi.yaml
+          generator: java
+
+      - name: Pushes test file
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source_file: 'java-client'
+          destination_repo: 'chillies-cleaver0b/java-sdk'
+          destination_branch_create: 'auto-update'
+          user_email: 'chillies-cleaver0b@icloud.com'
+          user_name: 'chillies-cleaver0b'
+          commit_message: 'Auto-update'
